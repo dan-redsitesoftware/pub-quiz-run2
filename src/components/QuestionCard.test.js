@@ -153,3 +153,33 @@ describe('createQuestionCard — interaction', () => {
     expect(onAnswerSelect).toHaveBeenNthCalledWith(4, 0, 'D')
   })
 })
+
+describe('createQuestionCard — selection locking (#14)', () => {
+  it('disables all buttons when selectedAnswer is set', () => {
+    const card = makeCard({ selectedAnswer: 'B' })
+    const buttons = [...card.querySelectorAll('button.answer-button')]
+    expect(buttons.every(btn => btn.disabled)).toBe(true)
+  })
+
+  it('does not disable buttons when selectedAnswer is null', () => {
+    const card = makeCard({ selectedAnswer: null })
+    const buttons = [...card.querySelectorAll('button.answer-button')]
+    expect(buttons.every(btn => !btn.disabled)).toBe(true)
+  })
+
+  it('does not call onAnswerSelect when buttons are locked', () => {
+    const onAnswerSelect = vi.fn()
+    const card = makeCard({ selectedAnswer: 'A', onAnswerSelect })
+    for (const key of ['A', 'B', 'C', 'D']) {
+      card.querySelector(`[data-answer-key="${key}"]`).click()
+    }
+    expect(onAnswerSelect).not.toHaveBeenCalled()
+  })
+
+  it('only the selected button has the --selected class when locked', () => {
+    const card = makeCard({ selectedAnswer: 'D' })
+    const selected = card.querySelectorAll('.answer-button--selected')
+    expect(selected).toHaveLength(1)
+    expect(selected[0].dataset.answerKey).toBe('D')
+  })
+})
