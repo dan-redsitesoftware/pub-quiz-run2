@@ -18,6 +18,8 @@ function makeCard(overrides = {}) {
     totalQuestions: 10,
     selectedAnswer: null,
     onAnswerSelect: vi.fn(),
+    isLastQuestion: false,
+    onNext: vi.fn(),
     ...overrides,
   })
 }
@@ -181,5 +183,65 @@ describe('createQuestionCard — selection locking (#14)', () => {
     const selected = card.querySelectorAll('.answer-button--selected')
     expect(selected).toHaveLength(1)
     expect(selected[0].dataset.answerKey).toBe('D')
+  })
+})
+
+describe('createQuestionCard — Next button (#15)', () => {
+  it('throws when onNext is not a function', () => {
+    expect(() => makeCard({ onNext: null })).toThrow()
+  })
+
+  it('renders a next button', () => {
+    const card = makeCard()
+    const btn = card.querySelector('button.next-button')
+    expect(btn).not.toBeNull()
+  })
+
+  it('labels the button "Next Question" when isLastQuestion is false', () => {
+    const card = makeCard({ isLastQuestion: false })
+    const btn = card.querySelector('button.next-button')
+    expect(btn.textContent).toBe('Next Question')
+  })
+
+  it('labels the button "Finish Quiz" when isLastQuestion is true', () => {
+    const card = makeCard({ isLastQuestion: true })
+    const btn = card.querySelector('button.next-button')
+    expect(btn.textContent).toBe('Finish Quiz')
+  })
+
+  it('disables the Next button when no answer is selected', () => {
+    const card = makeCard({ selectedAnswer: null })
+    const btn = card.querySelector('button.next-button')
+    expect(btn.disabled).toBe(true)
+  })
+
+  it('enables the Next button once an answer is selected', () => {
+    const card = makeCard({ selectedAnswer: 'B' })
+    const btn = card.querySelector('button.next-button')
+    expect(btn.disabled).toBe(false)
+  })
+
+  it('calls onNext when the Next button is clicked', () => {
+    const onNext = vi.fn()
+    const card = makeCard({ selectedAnswer: 'A', onNext })
+    card.querySelector('button.next-button').click()
+    expect(onNext).toHaveBeenCalledOnce()
+  })
+
+  it('does not call onNext when the button is disabled (no answer selected)', () => {
+    const onNext = vi.fn()
+    const card = makeCard({ selectedAnswer: null, onNext })
+    // Clicking a disabled button should not fire the listener
+    const btn = card.querySelector('button.next-button')
+    btn.click()
+    expect(onNext).not.toHaveBeenCalled()
+  })
+
+  it('renders the Next button after the answer options list', () => {
+    const card = makeCard()
+    const children = [...card.children]
+    const listIndex = children.findIndex(el => el.classList.contains('answer-options'))
+    const btnIndex = children.findIndex(el => el.classList.contains('next-button'))
+    expect(btnIndex).toBeGreaterThan(listIndex)
   })
 })
