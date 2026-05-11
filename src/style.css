@@ -1,0 +1,325 @@
+/* ==========================================================================
+   Pub Quiz – global stylesheet
+   Dark "pub" theme, plain CSS only, no external frameworks.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Custom properties (colour scheme)
+   -------------------------------------------------------------------------- */
+:root {
+  --color-bg:            #0f0f1a;
+  --color-surface:       #1c1c2e;
+  --color-surface-alt:   #252540;
+  --color-border:        #3a3a5c;
+  --color-accent:        #f59e0b;
+  --color-accent-hover:  #d97706;
+  --color-correct:       #22c55e;
+  --color-incorrect:     #ef4444;
+  --color-selected:      #3b82f6;
+  --color-selected-bg:   #1e3a5f;
+  --color-text:          #e2e2f0;
+  --color-text-muted:    #9090b0;
+  --color-btn-disabled:  #4a4a6a;
+  --radius:              0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Reset & base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   App wrapper
+   -------------------------------------------------------------------------- */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   Header – quiz title left, score display right
+   -------------------------------------------------------------------------- */
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.5rem;
+  background-color: var(--color-surface);
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.quiz-header__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.02em;
+}
+
+.quiz-header__score {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Question card – centred, max-width ~600px
+   -------------------------------------------------------------------------- */
+.question-card {
+  max-width: 620px;
+  margin: 2.5rem auto;
+  padding: 2rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* Progress indicator: "Question N of M" */
+.question-progress {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* Question text */
+.question-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Answer option buttons – full-width, hover, selected/correct/incorrect
+   -------------------------------------------------------------------------- */
+.answer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0;
+}
+
+.answer-option {
+  width: 100%;
+}
+
+.answer-button {
+  width: 100%;
+  padding: 0.8125rem 1rem;
+  text-align: left;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9375rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+/* Hover – only when not locked */
+.answer-button:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background-color: #2a2a40;
+}
+
+/* Selected (before reveal) */
+.answer-button--selected {
+  border-color: var(--color-selected);
+  background-color: var(--color-selected-bg);
+  font-weight: 600;
+}
+
+/* Correct answer revealed */
+.answer-button--correct {
+  border-color: var(--color-correct);
+  background-color: #14532d;
+  font-weight: 600;
+}
+
+/* Incorrect answer revealed */
+.answer-button--incorrect {
+  border-color: var(--color-incorrect);
+  background-color: #450a0a;
+  font-weight: 600;
+}
+
+/* Locked state (answer chosen, awaiting Next) */
+.answer-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.answer-button--selected:disabled,
+.answer-button--correct:disabled,
+.answer-button--incorrect:disabled {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Next / Finish Quiz button
+   -------------------------------------------------------------------------- */
+.next-button {
+  display: block;
+  margin-top: 1.75rem;
+  margin-left: auto;
+  padding: 0.75rem 1.75rem;
+  background-color: var(--color-accent);
+  color: #000;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.next-button:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.next-button:disabled {
+  background-color: var(--color-btn-disabled);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Results screen
+   -------------------------------------------------------------------------- */
+.quiz-complete {
+  max-width: 660px;
+  margin: 2.5rem auto;
+  padding: 2rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+/* "Quiz Complete!" heading */
+.quiz-complete__heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Score fraction + percentage – prominent */
+.quiz-complete__score {
+  font-size: 1.375rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text);
+  margin-bottom: 2rem;
+}
+
+/* Review sub-heading */
+.quiz-complete__review-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+/* Review list */
+.quiz-complete__review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin-bottom: 2rem;
+  padding: 0;
+}
+
+/* Each review item */
+.quiz-complete__review-item {
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius);
+  border-left: 4px solid transparent;
+  background-color: var(--color-surface-alt);
+}
+
+.quiz-complete__review-item--correct {
+  border-left-color: var(--color-correct);
+}
+
+.quiz-complete__review-item--incorrect {
+  border-left-color: var(--color-incorrect);
+}
+
+/* Question text in review */
+.quiz-complete__review-question {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.375rem;
+}
+
+/* "✅ Your answer: …" / "❌ Your answer: …" */
+.quiz-complete__review-result {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* "Correct answer: …" shown only for wrong answers */
+.quiz-complete__review-correct {
+  font-size: 0.875rem;
+  color: var(--color-correct);
+  margin-top: 0.25rem;
+}
+
+/* Play Again button */
+.quiz-complete__restart {
+  display: block;
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--color-accent);
+  color: #000;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.quiz-complete__restart:hover {
+  background-color: var(--color-accent-hover);
+}
