@@ -190,6 +190,67 @@ describe('getState()', () => {
     snapshot.selectedAnswers[0] = 'Z'
     expect(engine.getState().selectedAnswers[0]).toBeNull()
   })
+
+  it('includes score in the returned state', () => {
+    const engine = createQuizEngine(mockQuestions)
+    engine.startQuiz()
+    expect(engine.getState().score).toBe(0)
+  })
+})
+
+describe('score tracking', () => {
+  let engine
+
+  beforeEach(() => {
+    engine = createQuizEngine(mockQuestions)
+    engine.startQuiz()
+  })
+
+  it('initialises score to 0', () => {
+    expect(engine.getState().score).toBe(0)
+  })
+
+  it('increments score when correct answer is selected', () => {
+    engine.selectAnswer(0, 'C') // correct for question 0
+    expect(engine.getState().score).toBe(1)
+  })
+
+  it('does not increment score for an incorrect answer', () => {
+    engine.selectAnswer(0, 'A') // wrong
+    expect(engine.getState().score).toBe(0)
+  })
+
+  it('accumulates score across multiple correct answers', () => {
+    engine.selectAnswer(0, 'C') // correct
+    engine.selectAnswer(1, 'B') // correct
+    engine.selectAnswer(2, 'D') // correct
+    expect(engine.getState().score).toBe(3)
+  })
+
+  it('does not double-count when the same correct answer is selected again', () => {
+    engine.selectAnswer(0, 'C') // correct
+    engine.selectAnswer(0, 'C') // same correct answer again — score should not change
+    expect(engine.getState().score).toBe(1)
+  })
+
+  it('decrements score when switching from correct to incorrect answer', () => {
+    engine.selectAnswer(0, 'C') // correct → score 1
+    engine.selectAnswer(0, 'A') // now incorrect → score 0
+    expect(engine.getState().score).toBe(0)
+  })
+
+  it('resets score to 0 when startQuiz() is called again', () => {
+    engine.selectAnswer(0, 'C') // correct
+    engine.selectAnswer(1, 'B') // correct
+    engine.startQuiz()
+    expect(engine.getState().score).toBe(0)
+  })
+
+  it('score is not affected by selectAnswer when quiz is idle', () => {
+    const idleEngine = createQuizEngine(mockQuestions)
+    idleEngine.selectAnswer(0, 'C')
+    expect(idleEngine.getState().score).toBe(0)
+  })
 })
 
 describe('linear flow enforcement', () => {

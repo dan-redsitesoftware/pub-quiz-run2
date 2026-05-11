@@ -14,6 +14,7 @@
  * State shape:
  *   currentQuestionIndex  number   — zero-based index of the active question
  *   selectedAnswers       array    — one entry per question, null until answered
+ *   score                 number   — number of correct answers so far
  *   status                string   — 'idle' | 'active' | 'complete'
  */
 
@@ -31,6 +32,7 @@ export function createQuizEngine(questions) {
   const state = {
     currentQuestionIndex: 0,
     selectedAnswers: new Array(questions.length).fill(null),
+    score: 0,
     status: 'idle', // 'idle' | 'active' | 'complete'
   }
 
@@ -38,6 +40,7 @@ export function createQuizEngine(questions) {
   function startQuiz() {
     state.currentQuestionIndex = 0
     state.selectedAnswers = new Array(questions.length).fill(null)
+    state.score = 0
     state.status = 'active'
   }
 
@@ -51,7 +54,14 @@ export function createQuizEngine(questions) {
   function selectAnswer(questionIndex, answerKey) {
     if (state.status !== 'active') return
     if (questionIndex < 0 || questionIndex >= questions.length) return
+    const wasCorrect = state.selectedAnswers[questionIndex] === questions[questionIndex].answer
     state.selectedAnswers[questionIndex] = answerKey
+    const isCorrect = answerKey === questions[questionIndex].answer
+    if (!wasCorrect && isCorrect) {
+      state.score++
+    } else if (wasCorrect && !isCorrect) {
+      state.score--
+    }
   }
 
   /**
@@ -78,6 +88,7 @@ export function createQuizEngine(questions) {
     return {
       currentQuestionIndex: state.currentQuestionIndex,
       selectedAnswers: [...state.selectedAnswers],
+      score: state.score,
       status: state.status,
     }
   }
