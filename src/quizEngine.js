@@ -8,8 +8,8 @@
  *   const engine = createQuizEngine(questions)
  *   engine.startQuiz()
  *   engine.selectAnswer(0, 'C')
- *   engine.nextQuestion()     // advance; on last question this marks complete
- *   engine.isComplete()       // true once nextQuestion() called on final question
+ *   engine.nextQuestion()
+ *   engine.isComplete() // false until all questions exhausted
  *
  * State shape:
  *   currentQuestionIndex  number   — zero-based index of the active question
@@ -65,9 +65,8 @@ export function createQuizEngine(questions) {
   }
 
   /**
-   * Advance to the next question, or mark the quiz complete if already on the last question.
-   * Completion only triggers when called while *already on* the final question — after the
-   * player has had the opportunity to answer it — not when arriving at it.
+   * Advance to the next question.
+   * When called on the last question, marks the quiz as complete.
    * Has no effect if the quiz is not active.
    */
   function nextQuestion() {
@@ -75,7 +74,6 @@ export function createQuizEngine(questions) {
     if (state.currentQuestionIndex < questions.length - 1) {
       state.currentQuestionIndex++
     } else {
-      // Already on the last question — player has answered, now complete.
       state.status = 'complete'
     }
   }
