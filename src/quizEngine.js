@@ -63,9 +63,8 @@ export function createQuizEngine(questions) {
     if (state.status !== 'active') return
     if (state.currentQuestionIndex < questions.length - 1) {
       state.currentQuestionIndex++
-      if (state.currentQuestionIndex === questions.length - 1) {
-        state.status = 'complete'
-      }
+    } else {
+      state.status = 'complete'
     }
   }
 
