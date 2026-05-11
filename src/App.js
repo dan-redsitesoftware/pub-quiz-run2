@@ -16,19 +16,34 @@
 import { createQuizEngine } from './quizEngine.js'
 import { createQuestionCard } from './components/QuestionCard.js'
 import { createQuizComplete } from './components/QuizComplete.js'
+import { createWelcomeScreen } from './components/WelcomeScreen.js'
 
 export function createApp(container, questions, deps = {}) {
   const {
     quizEngine = createQuizEngine,
     questionCard = createQuestionCard,
     quizComplete = createQuizComplete,
+    welcomeScreen = createWelcomeScreen,
   } = deps
 
   const engine = quizEngine(questions)
-  engine.startQuiz()
+  let quizStarted = false
 
   function render() {
     container.innerHTML = ''
+
+    if (!quizStarted) {
+      const welcome = welcomeScreen({
+        onStart: () => {
+          quizStarted = true
+          engine.startQuiz()
+          render()
+        },
+      })
+      container.appendChild(welcome)
+      return
+    }
+
     const state = engine.getState()
 
     if (state.status === 'complete') {

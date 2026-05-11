@@ -220,6 +220,54 @@ button {
 }
 
 /* --------------------------------------------------------------------------
+   Welcome screen – shown before the quiz begins
+   -------------------------------------------------------------------------- */
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.welcome-screen__title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.welcome-screen__tagline {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.welcome-screen__start-btn {
+  padding: 0.875rem 2.5rem;
+  background-color: var(--color-accent);
+  color: #000;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.welcome-screen__start-btn:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.welcome-screen__start-btn:active {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
    Results screen
    -------------------------------------------------------------------------- */
 .quiz-complete {
