@@ -29,22 +29,64 @@ function makeContainer() {
   return document.createElement('div')
 }
 
-describe('createApp — initial render', () => {
-  it('renders a QuestionCard on start', () => {
+/** Helper: click "Start Quiz" to move past the welcome screen. */
+function startQuiz(container) {
+  container.querySelector('.welcome-screen__start-btn').click()
+}
+
+describe('createApp — welcome screen', () => {
+  it('renders the welcome screen on initial load', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    expect(container.querySelector('.welcome-screen')).not.toBeNull()
+  })
+
+  it('does not show a question card before Start Quiz is clicked', () => {
+    const container = makeContainer()
+    createApp(container, mockQuestions)
+    expect(container.querySelector('.question-card')).toBeNull()
+  })
+
+  it('does not show the quiz-complete view before Start Quiz is clicked', () => {
+    const container = makeContainer()
+    createApp(container, mockQuestions)
+    expect(container.querySelector('.quiz-complete')).toBeNull()
+  })
+
+  it('hides the welcome screen after Start Quiz is clicked', () => {
+    const container = makeContainer()
+    createApp(container, mockQuestions)
+    startQuiz(container)
+    expect(container.querySelector('.welcome-screen')).toBeNull()
+  })
+
+  it('shows the first question card after Start Quiz is clicked', () => {
+    const container = makeContainer()
+    createApp(container, mockQuestions)
+    startQuiz(container)
+    expect(container.querySelector('.question-card')).not.toBeNull()
+  })
+})
+
+describe('createApp — initial render (after start)', () => {
+  it('renders a QuestionCard after start', () => {
+    const container = makeContainer()
+    createApp(container, mockQuestions)
+    startQuiz(container)
     expect(container.querySelector('.question-card')).not.toBeNull()
   })
 
   it('shows the first question initially', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
     expect(container.querySelector('.question-progress').textContent).toBe('Question 1 of 3')
   })
 
   it('does not show the quiz-complete view initially', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
     expect(container.querySelector('.quiz-complete')).toBeNull()
   })
 })
@@ -53,6 +95,7 @@ describe('createApp — navigation', () => {
   it('advances to question 2 after selecting an answer and clicking Next', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
@@ -63,6 +106,7 @@ describe('createApp — navigation', () => {
   it('shows "Finish Quiz" button on the last question', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
 
     // Q1: answer + next
     container.querySelector('[data-answer-key="A"]').click()
@@ -81,6 +125,7 @@ describe('createApp — quiz completion (#17)', () => {
   it('transitions to quiz-complete view after Finish Quiz is clicked on last question', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
@@ -98,6 +143,7 @@ describe('createApp — quiz completion (#17)', () => {
   it('displays "Quiz Complete!" heading after completion', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
@@ -112,6 +158,7 @@ describe('createApp — quiz completion (#17)', () => {
   it('displays score fraction in quiz-complete view', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
@@ -129,6 +176,7 @@ describe('createApp — quiz completion (#17)', () => {
   it('resets quiz when Play Again is clicked', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
@@ -148,6 +196,7 @@ describe('createApp — quiz completion (#17)', () => {
   it('does not allow navigation once quiz is complete', () => {
     const container = makeContainer()
     const { engine } = createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
@@ -165,6 +214,7 @@ describe('createApp — quiz completion (#17)', () => {
   it('engine isComplete() returns true after Finish Quiz', () => {
     const container = makeContainer()
     const { engine } = createApp(container, mockQuestions)
+    startQuiz(container)
 
     container.querySelector('[data-answer-key="A"]').click()
     container.querySelector('button.next-button').click()
