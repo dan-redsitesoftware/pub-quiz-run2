@@ -65,16 +65,22 @@ export function createQuestionCard({ question, questionIndex, totalQuestions, se
     const li = document.createElement('li')
     li.className = 'answer-option'
 
+    const isSelected = selectedAnswer === key
+    const isLocked = selectedAnswer !== null
+
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = 'answer-button' + (selectedAnswer === key ? ' answer-button--selected' : '')
+    button.className = 'answer-button' + (isSelected ? ' answer-button--selected' : '')
     button.dataset.answerKey = key
-    button.setAttribute('aria-pressed', String(selectedAnswer === key))
+    button.setAttribute('aria-pressed', String(isSelected))
+    button.disabled = isLocked
     button.textContent = `${key}: ${question.options[key]}`
 
-    button.addEventListener('click', () => {
-      onAnswerSelect(questionIndex, key)
-    })
+    if (!isLocked) {
+      button.addEventListener('click', () => {
+        onAnswerSelect(questionIndex, key)
+      })
+    }
 
     li.appendChild(button)
     optionsList.appendChild(li)
