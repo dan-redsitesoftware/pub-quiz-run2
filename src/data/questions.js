@@ -41,6 +41,30 @@ const questions = [
     options: { A: 'Buzz Aldrin', B: 'Yuri Gagarin', C: 'John Glenn', D: 'Neil Armstrong' },
     answer: 'D',
   },
+  {
+    id: 6,
+    question: 'What is the chemical symbol for gold?',
+    options: { A: 'Go', B: 'Gd', C: 'Au', D: 'Ag' },
+    answer: 'C',
+  },
+  {
+    id: 7,
+    question: 'How many planets are in our solar system?',
+    options: { A: '7', B: '8', C: '9', D: '10' },
+    answer: 'B',
+  },
+  {
+    id: 8,
+    question: 'What does CPU stand for?',
+    options: { A: 'Central Processing Unit', B: 'Computer Processing Unit', C: 'Central Program Utility', D: 'Core Processing Unit' },
+    answer: 'A',
+  },
+  {
+    id: 9,
+    question: 'Which element has the atomic number 1?',
+    options: { A: 'Helium', B: 'Oxygen', C: 'Carbon', D: 'Hydrogen' },
+    answer: 'D',
+  },
 ];
 
 export default questions;
