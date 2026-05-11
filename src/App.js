@@ -33,8 +33,13 @@ export function createApp(container, questions, deps = {}) {
 
     if (state.status === 'complete') {
       const completeView = quizComplete({
-        totalQuestions: questions.length,
+        questions,
         selectedAnswers: state.selectedAnswers,
+        score: state.score,
+        onRestart: () => {
+          engine.startQuiz()
+          render()
+        },
       })
       container.appendChild(completeView)
       return

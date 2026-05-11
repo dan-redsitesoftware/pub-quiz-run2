@@ -109,7 +109,7 @@ describe('createApp — quiz completion (#17)', () => {
     expect(container.querySelector('.quiz-complete__heading').textContent).toBe('Quiz Complete!')
   })
 
-  it('preserves all selected answers in quiz-complete summary', () => {
+  it('displays score fraction in quiz-complete view', () => {
     const container = makeContainer()
     createApp(container, mockQuestions)
 
@@ -120,8 +120,29 @@ describe('createApp — quiz completion (#17)', () => {
     container.querySelector('[data-answer-key="C"]').click()
     container.querySelector('button.next-button').click()
 
-    const summary = container.querySelector('.quiz-complete__summary')
-    expect(summary.textContent).toBe('You answered 3 of 3 questions.')
+    // All 3 answers are correct: A, B, C
+    const scoreSummary = container.querySelector('.quiz-complete__score')
+    expect(scoreSummary.textContent).toContain('3/3')
+    expect(scoreSummary.textContent).toContain('100%')
+  })
+
+  it('resets quiz when Play Again is clicked', () => {
+    const container = makeContainer()
+    createApp(container, mockQuestions)
+
+    container.querySelector('[data-answer-key="A"]').click()
+    container.querySelector('button.next-button').click()
+    container.querySelector('[data-answer-key="B"]').click()
+    container.querySelector('button.next-button').click()
+    container.querySelector('[data-answer-key="C"]').click()
+    container.querySelector('button.next-button').click()
+
+    // click Play Again
+    container.querySelector('.quiz-complete__restart').click()
+
+    expect(container.querySelector('.question-card')).not.toBeNull()
+    expect(container.querySelector('.quiz-complete')).toBeNull()
+    expect(container.querySelector('.question-progress').textContent).toBe('Question 1 of 3')
   })
 
   it('does not allow navigation once quiz is complete', () => {
