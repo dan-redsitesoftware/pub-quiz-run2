@@ -1,7 +1,7 @@
 /**
- * QuestionCard — renders a single quiz question with its four answer options.
+ * QuestionCard — renders a single quiz question with its four answer options and a Next button.
  *
- * Props (all required):
+ * Props (all required unless noted):
  *   question        {object}        — question object from the question bank
  *   question.id     {number}
  *   question.question {string}      — the question text
@@ -10,6 +10,8 @@
  *   totalQuestions  {number}        — total number of questions in the quiz
  *   selectedAnswer  {string|null}   — currently selected option key, or null
  *   onAnswerSelect  {function}      — called with (questionIndex, answerKey) when an option is chosen
+ *   isLastQuestion  {boolean}       — when true the Next button label changes to "Finish Quiz"
+ *   onNext          {function}      — called when the Next / Finish Quiz button is clicked
  *
  * Returns a <div class="question-card"> element ready to mount into the DOM.
  * No correct/incorrect styling is applied — answer reveal is deferred to the results screen.
@@ -26,9 +28,11 @@ const ANSWER_KEYS = ['A', 'B', 'C', 'D']
  * @param {number} props.totalQuestions
  * @param {string|null} props.selectedAnswer
  * @param {function(number, string): void} props.onAnswerSelect
+ * @param {boolean} props.isLastQuestion
+ * @param {function(): void} props.onNext
  * @returns {HTMLElement}
  */
-export function createQuestionCard({ question, questionIndex, totalQuestions, selectedAnswer, onAnswerSelect }) {
+export function createQuestionCard({ question, questionIndex, totalQuestions, selectedAnswer, onAnswerSelect, isLastQuestion = false, onNext }) {
   if (!question || typeof question.question !== 'string') {
     throw new Error('QuestionCard: question must be a valid question object')
   }
@@ -40,6 +44,9 @@ export function createQuestionCard({ question, questionIndex, totalQuestions, se
   }
   if (typeof onAnswerSelect !== 'function') {
     throw new Error('QuestionCard: onAnswerSelect must be a function')
+  }
+  if (typeof onNext !== 'function') {
+    throw new Error('QuestionCard: onNext must be a function')
   }
 
   const card = document.createElement('div')
@@ -65,22 +72,39 @@ export function createQuestionCard({ question, questionIndex, totalQuestions, se
     const li = document.createElement('li')
     li.className = 'answer-option'
 
+    const isSelected = selectedAnswer === key
+    const isLocked = selectedAnswer !== null
+
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = 'answer-button' + (selectedAnswer === key ? ' answer-button--selected' : '')
+    button.className = 'answer-button' + (isSelected ? ' answer-button--selected' : '')
     button.dataset.answerKey = key
-    button.setAttribute('aria-pressed', String(selectedAnswer === key))
+    button.setAttribute('aria-pressed', String(isSelected))
+    button.disabled = isLocked
     button.textContent = `${key}: ${question.options[key]}`
 
-    button.addEventListener('click', () => {
-      onAnswerSelect(questionIndex, key)
-    })
+    if (!isLocked) {
+      button.addEventListener('click', () => {
+        onAnswerSelect(questionIndex, key)
+      })
+    }
 
     li.appendChild(button)
     optionsList.appendChild(li)
   }
 
   card.appendChild(optionsList)
+
+  // Next / Finish Quiz button
+  const nextButton = document.createElement('button')
+  nextButton.type = 'button'
+  nextButton.className = 'next-button'
+  nextButton.textContent = isLastQuestion ? 'Finish Quiz' : 'Next Question'
+  nextButton.disabled = selectedAnswer === null
+  nextButton.addEventListener('click', () => {
+    onNext()
+  })
+  card.appendChild(nextButton)
 
   return card
 }
