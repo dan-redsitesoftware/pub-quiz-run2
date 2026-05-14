@@ -5,7 +5,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "start": "serve . -p 3000"
+    "start": "serve . -p ${PORT:-3000}"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.0.0",
